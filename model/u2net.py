@@ -533,7 +533,10 @@ def pymatting_cf(image, trimap):
     all_est_alpha = []
 
     #preprocessing images.
-    image = (image*0.229 + 0.485) # rescale it to 0.0 - 1.0.
+    image_scaling_fac = 0.229
+    image_shifting_fac = 0.485
+
+    image = (image*image_scaling_fac + image_shifting_fac) # rescale it to 0.0 - 1.0.
     image = image.cpu()
     image = image.numpy()
     image = np.float64(image)
@@ -548,7 +551,10 @@ def pymatting_cf(image, trimap):
         curr_trimap_max = np.max(curr_trimap)
         print('trimap min, max val:', np.min(curr_trimap), np.max(curr_trimap))
 
-        if curr_trimap_min <= 0.1 and curr_trimap_max >= 0.9:
+        min_bg_leq_value = 0.1
+        min_fg_geq_value = 0.9
+
+        if curr_trimap_min <= min_bg_leq_value and curr_trimap_max >= min_fg_geq_value:
             curr_est_alpha = estimate_alpha_cf(curr_image, curr_trimap)
         else:
             curr_est_alpha = curr_trimap
